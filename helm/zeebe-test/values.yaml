@@ -133,10 +133,10 @@ ph-ee-engine:
             key: encryptionkey
     ingress:
       enabled: true
-      className: "nginx"
+      className: "kong"
       pathtype: ImplementationSpecific
       annotations: {}
-      kubernetes.io/ingress.class: nginx
+      kubernetes.io/ingress.class: kong
       kubernetes.io/tls-acme: "true"
       hosts:
         - host: analytics2.sandbox.fynarfin.io
@@ -240,7 +240,7 @@ ph-ee-engine:
     ingress:
       enabled: true
       annotations:
-        kubernetes.io/ingress.class: "nginx"
+        kubernetes.io/ingress.class: "kong"
       path: "/"
       backend:
         service:
@@ -261,7 +261,7 @@ ph-ee-engine:
     ingress:
       enabled: true
       annotations:
-        kubernetes.io/ingress.class: "nginx"
+        kubernetes.io/ingress.class: "kong"
       path: "/"
       backend:
         service:
@@ -306,7 +306,7 @@ ph-ee-engine:
     ingress:
       enabled: true
       annotations:
-        kubernetes.io/ingress.class: "nginx"
+        kubernetes.io/ingress.class: "kong"
       path: "/"
       backend:
         service:
@@ -413,7 +413,7 @@ ph-ee-engine:
       repository: revomatico/docker-kong-oidc
       tag: "latest"
     env:
-      plugins: "bundled,oidc,request-transformer,add-header,http-log"
+      plugins: "bundled,oidc,request-transformer,cors,http-log"
     admin:
       enabled: true
       http:
@@ -423,7 +423,7 @@ ph-ee-engine:
       ingress:
         enabled: true
         ingressClassName: "kong"
-        hostname: kong-admin.mifos.io
+        hostname: kong-admin.sandbox.fynarfin.io
     extraObjects:
       - apiVersion: configuration.konghq.com/v1
         kind: KongClusterPlugin
@@ -436,9 +436,9 @@ ph-ee-engine:
         disabled: false # optionally disable the plugin in Kong
         plugin: request-transformer
         config:
-          add:
+          replace:
             headers:
-              - "X-Client-IP"
+              X-Client-IP: $remote_addr
           remove:
             headers:
               - cookie
@@ -480,24 +480,11 @@ ph-ee-engine:
       - apiVersion: configuration.konghq.com/v1
         kind: KongClusterPlugin
         metadata:
-          name: add-header
-          annotations:
-            kubernetes.io/ingress.class: "kong"
-          labels:
-            global: "false"
-        disabled: false # optionally disable the plugin in Kong
-        plugin: add-header
-        config: # configuration for the add-header
-          header_name: X-Client-IP
-          header_value_template: "${request.get_forwarded_ip()}"
-      - apiVersion: configuration.konghq.com/v1
-        kind: KongClusterPlugin
-        metadata:
           name: http-log
           annotations:
             kubernetes.io/ingress.class: "kong"
           labels:
-            global: "false"
+            global: "true"
         disabled: false # optionally disable the plugin in Kong
         plugin: http-log
         config: # configuration for the add-header
