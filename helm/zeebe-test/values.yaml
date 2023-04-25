@@ -1,5 +1,4 @@
 ph-ee-engine:
-
   camunda-platform:
     global:
       zeebe: "zeebetest-zeebe"
@@ -14,14 +13,17 @@ ph-ee-engine:
       image:
         repository: camunda/zeebe
         tag: 8.1.1
-      extraInitContainers: 
+      extraInitContainers:
         - name: init-ph-ee-kafka-exporter
           image: busybox:1.28
-          command: ['/bin/sh', '-c']
-          args: ['wget -O /exporters/ph-ee-kafka-exporter.jar "https://fynarfin.io/images/exporter-1.1.1-SNAPSHOT.jar"; ls -al /exporters/']
+          command: ["/bin/sh", "-c"]
+          args:
+            [
+              'wget -O /exporters/ph-ee-kafka-exporter.jar "https://fynarfin.io/images/exporter-1.1.1-SNAPSHOT.jar"; ls -al /exporters/',
+            ]
           volumeMounts:
-          - name: exporters
-            mountPath: /exporters/
+            - name: exporters
+              mountPath: /exporters/
 
   elasticsearch:
     enabled: true
@@ -83,7 +85,7 @@ ph-ee-engine:
         cpu: "1000m"
         memory: "1024M"
     volumeClaimTemplate:
-      accessModes: [ "ReadWriteOnce" ]
+      accessModes: ["ReadWriteOnce"]
       storageClassName: "gp2"
       resources:
         requests:
@@ -114,17 +116,17 @@ ph-ee-engine:
         secretName: elastic-certificate-pem
         path: /usr/share/kibana/config/certs
     extraEnvs:
-      - name: 'ELASTICSEARCH_USERNAME'
+      - name: "ELASTICSEARCH_USERNAME"
         valueFrom:
           secretKeyRef:
             name: elastic-credentials
             key: username
-      - name: 'ELASTICSEARCH_PASSWORD'
+      - name: "ELASTICSEARCH_PASSWORD"
         valueFrom:
           secretKeyRef:
             name: elastic-credentials
             key: password
-      - name: 'KIBANA_ENCRYPTION_KEY'
+      - name: "KIBANA_ENCRYPTION_KEY"
         valueFrom:
           secretKeyRef:
             name: kibana
@@ -290,7 +292,7 @@ ph-ee-engine:
 
   connector_bulk:
     enabled: false
-  
+
   zeebe_ops:
     enabled: true
     image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/phee-zeebe-ops"
@@ -358,7 +360,7 @@ ph-ee-engine:
     image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/phee-importer-rdbms"
     imageTag: latest
     LOGGING_LEVEL_ROOT: "INFO"
-  
+
   #  ph_ee_integration_test:
   #    enabled: true
 
@@ -404,3 +406,110 @@ ph-ee-engine:
   wildcardhostname: "*.sandbox.fynarfin.io"
 
   tls: ""
+
+  kong:
+    enabled: true
+    image:
+      repository: revomatico/docker-kong-oidc
+      tag: "latest"
+    env:
+      plugins: "bundled,oidc,request-transformer,add-header,http-log"
+    admin:
+      enabled: true
+      http:
+        enabled: true
+      tls:
+        enabled: false
+      ingress:
+        enabled: true
+        ingressClassName: "kong"
+        hostname: kong-admin.mifos.io
+    extraObjects:
+      - apiVersion: configuration.konghq.com/v1
+        kind: KongClusterPlugin
+        metadata:
+          name: request-transformer
+          annotations:
+            kubernetes.io/ingress.class: "kong"
+          labels:
+            global: "false"
+        disabled: false # optionally disable the plugin in Kong
+        plugin: request-transformer
+        config:
+          add:
+            headers:
+              - "X-Client-IP"
+          remove:
+            headers:
+              - cookie
+              - x-id-token
+      - apiVersion: configuration.konghq.com/v1
+        kind: KongClusterPlugin
+        metadata:
+          name: cors
+          annotations:
+            kubernetes.io/ingress.class: "kong"
+          labels:
+            global: "true"
+        disabled: false # optionally disable the plugin in Kong
+        plugin: cors
+        config:
+          origins:
+            - "*"
+          credentials: true
+          max_age: 3600
+          exposed_headers:
+            - "X-Auth-Token"
+          preflight_continue: false
+      - apiVersion: configuration.konghq.com/v1
+        kind: KongClusterPlugin
+        metadata:
+          name: oidc
+          annotations:
+            kubernetes.io/ingress.class: "kong"
+          labels:
+            global: "false"
+        disabled: false # optionally disable the plugin in Kong
+        plugin: oidc
+        config: # configuration for the plugin
+          client_id: kong-oidc
+          client_secret: xxxxxxxx # Generated on keyCloak
+          realm: kong
+          discovery: https://keycloak.sandbox.fynarfin.io/auth/realms/kong-oidc/.well-known/openid-configuration
+          scope: openid
+      - apiVersion: configuration.konghq.com/v1
+        kind: KongClusterPlugin
+        metadata:
+          name: add-header
+          annotations:
+            kubernetes.io/ingress.class: "kong"
+          labels:
+            global: "false"
+        disabled: false # optionally disable the plugin in Kong
+        plugin: add-header
+        config: # configuration for the add-header
+          header_name: X-Client-IP
+          header_value_template: "${request.get_forwarded_ip()}"
+      - apiVersion: configuration.konghq.com/v1
+        kind: KongClusterPlugin
+        metadata:
+          name: http-log
+          annotations:
+            kubernetes.io/ingress.class: "kong"
+          labels:
+            global: "false"
+        disabled: false # optionally disable the plugin in Kong
+        plugin: http-log
+        config: # configuration for the add-header
+          http_endpoint: https://webhook.site/8702fa12-6f1e-4c0e-a6c1-481192899380
+          method: POST,GET
+          content_type: application/json
+          flush_timeout: 2
+          keepalive: 60
+          timeout: 10000
+          retry_count: 10
+          retry_delay: 5000
+          retries: 5
+          log_bodies: true
+          request_headers:
+            - X-Forwarded-For
