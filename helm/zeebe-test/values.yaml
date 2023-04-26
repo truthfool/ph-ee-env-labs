@@ -413,7 +413,12 @@ ph-ee-engine:
       repository: revomatico/docker-kong-oidc
       tag: "latest"
     env:
-      plugins: "bundled,oidc,request-transformer,cors,http-log"
+      plugins:
+        - bundled
+        - oidc
+        - request-transformer
+        - cors
+        - http-log
     admin:
       enabled: true
       http:
