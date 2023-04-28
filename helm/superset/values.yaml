@@ -843,7 +843,7 @@ ph-ee-engine:
       repository: revomatico/docker-kong-oidc
       tag: "latest"
     env:
-      plugins: "bundled,oidc"
+      plugins: "bundled,oidc,request-transformer,cors,http-log"
     admin:
       enabled: true
       http:
@@ -853,7 +853,7 @@ ph-ee-engine:
       ingress:
         enabled: true
         ingressClassName: "kong"
-        hostname: admin-kong.sandbox.fynarfin.io
+        hostname: kong-admin.mifos.io
     extraObjects:
       - apiVersion: configuration.konghq.com/v1
         kind: KongClusterPlugin
@@ -866,10 +866,13 @@ ph-ee-engine:
         disabled: false # optionally disable the plugin in Kong
         plugin: request-transformer
         config:
+          replace:
+            headers:
+              X-Client-IP: $remote_addr
           remove:
             headers:
-            - cookie
-            - x-id-token
+              - cookie
+              - x-id-token
       - apiVersion: configuration.konghq.com/v1
         kind: KongClusterPlugin
         metadata:
@@ -902,8 +905,32 @@ ph-ee-engine:
           client_id: kong-oidc 
           client_secret: xxxxxxxx  # Generated on keyCloak
           realm: kong
-          discovery: https://keycloak.sandbox.fynarfin.io/auth/realms/kong-oidc/.well-known/openid-configuration
+          discovery: https://keycloak.localhost/auth/realms/kong-oidc/.well-known/openid-configuration
           scope: openid
+      - apiVersion: configuration.konghq.com/v1
+        kind: KongClusterPlugin
+        metadata:
+          name: http-log
+          annotations:
+            kubernetes.io/ingress.class: "kong"
+          labels:
+            global: "true"
+        disabled: false # optionally disable the plugin in Kong
+        plugin: http-log
+        config: # configuration for the add-header
+          http_endpoint: https://webhook.site/8702fa12-6f1e-4c0e-a6c1-481192899380
+          method: POST,GET
+          content_type: application/json
+          flush_timeout: 2
+          keepalive: 60
+          timeout: 10000
+          retry_count: 10
+          retry_delay: 5000
+          retries: 5
+          log_bodies: true
+          request_headers:
+            - X-Forwarded-For
+
 
   keycloak:
     enabled: true
