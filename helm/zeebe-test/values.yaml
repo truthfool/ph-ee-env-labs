@@ -432,6 +432,7 @@ ph-ee-engine:
       plugins: "bundled,oidc,request-transformer,cors,http-log"
     admin:
       enabled: true
+      loadBalancerClass: "kong"
       http:
         enabled: true
       tls:
