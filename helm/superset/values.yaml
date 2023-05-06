@@ -156,7 +156,7 @@ ph-ee-engine:
             key: encryptionkey
     ingress:
       enabled: true
-      className: "nginx"
+      className: "kong"
       pathtype: ImplementationSpecific
       annotations:
       # kubernetes.io/ingress.class: nginx
@@ -832,7 +832,6 @@ ph-ee-engine:
         plugin: http-log
         config: # configuration for the add-header
           http_endpoint: https://webhook.site/8702fa12-6f1e-4c0e-a6c1-481192899380
-          method: POST
           content_type: application/json
           flush_timeout: 2
           keepalive: 60
