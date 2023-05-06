@@ -141,10 +141,10 @@ ph-ee-engine:
             key: encryptionkey
     ingress:
       enabled: true
-      className: "nginx"
+      className: "kong"
       pathtype: ImplementationSpecific
       annotations: {}
-      kubernetes.io/ingress.class: nginx
+      kubernetes.io/ingress.class: kong
       kubernetes.io/tls-acme: "true" 
       hosts:
         - host: analytics2.sandbox.fynarfin.io
@@ -234,7 +234,7 @@ ph-ee-engine:
     ingress:
       enabled: true
       annotations:
-        kubernetes.io/ingress.class: "nginx"
+        kubernetes.io/ingress.class: "kong"
       path: "/"
       backend:
         service:
@@ -272,7 +272,7 @@ ph-ee-engine:
     ingress:
       enabled: true
       annotations:
-        kubernetes.io/ingress.class: "nginx"
+        kubernetes.io/ingress.class: "kong"
       path: "/"
       backend:
         service:
@@ -299,7 +299,7 @@ ph-ee-engine:
     ingress:
       enabled: true
       annotations:
-        kubernetes.io/ingress.class: "nginx"
+        kubernetes.io/ingress.class: "kong"
       path: "/"
       backend:
         service:
@@ -350,7 +350,7 @@ ph-ee-engine:
     ingress:
       enabled: true
       annotations:
-        kubernetes.io/ingress.class: "nginx"
+        kubernetes.io/ingress.class: "kong"
       path: "/"
       backend:
         service:
