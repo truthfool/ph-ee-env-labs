@@ -516,29 +516,6 @@ ph-ee-engine:
           request_headers:
             - X-Forwarded-For
 
-  keycloak:
-    enabled: true
-    ingress:
-      enabled: true
-      ingressClassName: "kong"
-      rules:
-        - host: 'keycloak.sandbox.fynarfin.io'
-          paths:
-          - path: /
-            pathType: Prefix
-      tls: []
-    extraVolumes: |
-      - name: realm-secret
-        secret:
-          secretName: realm-secret
-    extraVolumeMounts: |
-      - name: realm-secret
-        mountPath: "/realm/"
-        readOnly: true
-    extraEnv: |
-      - name: KEYCLOAK_IMPORT
-        value: /realm/kong-keycloak-realm.json
-
   wildcardhostname: "*.sandbox.fynarfin.io"
 
   tls: "sandbox-secret"
