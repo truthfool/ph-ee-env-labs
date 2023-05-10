@@ -94,8 +94,6 @@ ph-ee-engine:
           port: 9200
         initialDelaySeconds: 30
 
-
-
     # Shrink default JVM heap.
     esJavaOpts: "-Xmx512m -Xms512m"
 
@@ -108,7 +106,7 @@ ph-ee-engine:
         cpu: "1000m"
         memory: "1024M"
     volumeClaimTemplate:
-      accessModes: [ "ReadWriteOnce" ]
+      accessModes: ["ReadWriteOnce"]
       storageClassName: "gp2"
       resources:
         requests:
@@ -139,17 +137,17 @@ ph-ee-engine:
         secretName: elastic-certificate-pem
         path: /usr/share/kibana/config/certs
     extraEnvs:
-      - name: 'ELASTICSEARCH_USERNAME'
+      - name: "ELASTICSEARCH_USERNAME"
         valueFrom:
           secretKeyRef:
             name: elastic-credentials
             key: username
-      - name: 'ELASTICSEARCH_PASSWORD'
+      - name: "ELASTICSEARCH_PASSWORD"
         valueFrom:
           secretKeyRef:
             name: elastic-credentials
             key: password
-      - name: 'KIBANA_ENCRYPTION_KEY'
+      - name: "KIBANA_ENCRYPTION_KEY"
         valueFrom:
           secretKeyRef:
             name: kibana
@@ -161,7 +159,7 @@ ph-ee-engine:
       annotations:
       # kubernetes.io/ingress.class: nginx
       # kubernetes.io/ingress.class: kong
-      # kubernetes.io/tls-acme: "true" 
+      # kubernetes.io/tls-acme: "true"
       hosts:
         - host: analytics.sandbox.fynarfin.io
           paths:
@@ -197,12 +195,12 @@ ph-ee-engine:
     SPRING_PROFILES_ACTIVE: "fin12"
     hostname: "amsmifos.sandbox.fynarfin.io"
     ams_local_enabled: true
-    ams_local_interop_host : "https://fynams.sandbox.fynarfin.io"
-    ams_local_customer_host : "https://fynams.sandbox.fynarfin.io"
-    ams_local_account_host : "https://fynams.sandbox.fynarfin.io"
-    ams_local_auth_host : "https://fynams.sandbox.fynarfin.io"
-    ams_local_loan_host : "https://fynams.sandbox.fynarfin.io/"
-    dfspids: "gorilla,rhino"
+    ams_local_interop_host: "https://fynams.sandbox.fynarfin.io"
+    ams_local_customer_host: "https://fynams.sandbox.fynarfin.io"
+    ams_local_account_host: "https://fynams.sandbox.fynarfin.io"
+    ams_local_auth_host: "https://fynams.sandbox.fynarfin.io"
+    ams_local_loan_host: "https://fynams.sandbox.fynarfin.io/"
+    accountHoldingInstitutionIds: "gorilla,rhino"
     ## tenants properties have been moved to fin12
     limits:
       cpu: "500m"
@@ -221,7 +219,7 @@ ph-ee-engine:
         service:
           name: ph-ee-connector-ams-mifos
           port:
-            number: 80      
+            number: 80
     deployment:
       annotations:
         deployTime: "{{ .Values.deployTime }}"
@@ -294,7 +292,7 @@ ph-ee-engine:
     SPRING_PROFILES_ACTIVE: "bb,tenants"
     hostname: "channel.sandbox.fynarfin.io"
     stub_hostname: "channel-gsma.sandbox.fynarfin.io"
-    DFSPIDS: "gorilla,lion"
+    accountHoldingInstitutionIds: "gorilla,lion"
     operations:
       url: "http://ops-bk.sandbox.fynarfin.io/api/v1"
       authEnabled: false
@@ -334,7 +332,6 @@ ph-ee-engine:
       annotations:
         deployTime: "{{ .Values.deployTime }}"
 
-
   mockpayment:
     enabled: true
     image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/phee-mock-payment-schema"
@@ -350,7 +347,6 @@ ph-ee-engine:
     deployment:
       annotations:
         deployTime: "{{ .Values.deployTime }}"
-
 
   gsmachannel:
     enabled: true
@@ -447,13 +443,13 @@ ph-ee-engine:
         nginx.ingress.kubernetes.io/configuration-snippet: |
           more_set_headers "Access-Control-Allow-Origin: *";
           more_set_headers "Platform-TenantId: *";
-        nginx.ingress.kubernetes.io/cors-allow-credentials: 'true'
+        nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
         nginx.ingress.kubernetes.io/cors-allow-headers: >-
           DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization,Platform-TenantId
         nginx.ingress.kubernetes.io/cors-allow-methods: PUT, GET, POST, OPTIONS, DELETE, PATCH
-        nginx.ingress.kubernetes.io/enable-cors: 'true'
+        nginx.ingress.kubernetes.io/enable-cors: "true"
       tls:
-        - secretName: sandbox-secret 
+        - secretName: sandbox-secret
       path: "/"
       backend:
         service:
@@ -484,7 +480,7 @@ ph-ee-engine:
         kubernetes.io/ingress.class: "nginx"
         konghq.com/plugins: request-transformer,oidc,cors
       tls:
-        - secretName: sandbox-secret 
+        - secretName: sandbox-secret
       path: "/"
       backend:
         service:
@@ -579,7 +575,7 @@ ph-ee-engine:
       annotations:
         kubernetes.io/ingress.class: "nginx"
       tls:
-        - secretName: sandbox-secret 
+        - secretName: sandbox-secret
       path: "/"
       backend:
         service:
@@ -693,7 +689,7 @@ ph-ee-engine:
     ingress:
       enabled: true
       className: "kong"
-      annotations: 
+      annotations:
         kubernetes.io/ingress.class: "nginx"
         konghq.com/plugins: cors
       tls:
@@ -874,8 +870,8 @@ ph-ee-engine:
         config:
           remove:
             headers:
-            - cookie
-            - x-id-token
+              - cookie
+              - x-id-token
       - apiVersion: configuration.konghq.com/v1
         kind: KongClusterPlugin
         metadata:
@@ -883,15 +879,15 @@ ph-ee-engine:
           annotations:
             kubernetes.io/ingress.class: "kong"
           labels:
-            global: "true"    
+            global: "true"
         disabled: false # optionally disable the plugin in Kong
         plugin: cors
-        config: 
-          origins: 
+        config:
+          origins:
             - "*"
           credentials: true
           max_age: 3600
-          exposed_headers : 
+          exposed_headers:
             - "X-Auth-Token"
           preflight_continue: false
       - apiVersion: configuration.konghq.com/v1
@@ -905,8 +901,8 @@ ph-ee-engine:
         disabled: false # optionally disable the plugin in Kong
         plugin: oidc
         config: # configuration for the plugin
-          client_id: kong-oidc 
-          client_secret: xxxxxxxx  # Generated on keyCloak
+          client_id: kong-oidc
+          client_secret: xxxxxxxx # Generated on keyCloak
           realm: kong
           discovery: https://keycloak.sandbox.fynarfin.io/auth/realms/kong-oidc/.well-known/openid-configuration
           scope: openid
@@ -917,10 +913,10 @@ ph-ee-engine:
       enabled: true
       ingressClassName: "kong"
       rules:
-        - host: 'keycloak.sandbox.fynarfin.io'
+        - host: "keycloak.sandbox.fynarfin.io"
           paths:
-          - path: /
-            pathType: Prefix
+            - path: /
+              pathType: Prefix
       tls: []
     extraVolumes: |
       - name: realm-secret
@@ -937,7 +933,7 @@ ph-ee-engine:
   wildcardhostname: "*.sandbox.fynarfin.io"
 
   tls: "sandbox-secret"
-  
+
   zeebe-operate:
     ingress:
       enabled: true
@@ -946,7 +942,7 @@ ph-ee-engine:
       annotations:
         kubernetes.io/ingress.class: "kong"
       tls:
-        - secretName: sandbox-secret 
+        - secretName: sandbox-secret
       path: "/"
       backend:
         service:
@@ -965,15 +961,15 @@ ph-ee-engine:
       path: "/"
       className: "nginx"
       annotations:
-          kubernetes.io/ingress.class: "nginx"
+        kubernetes.io/ingress.class: "nginx"
       backend:
         service:
-            name: mock-oracle
-            port:
-              number: 80
+          name: mock-oracle
+          port:
+            number: 80
     deployment:
       annotations:
-          deployTime: "{{ .Values.deployTime }}"
+        deployTime: "{{ .Values.deployTime }}"
 
   redis:
     enabled: true
