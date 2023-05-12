@@ -442,7 +442,7 @@ ph-ee-engine:
       ingress:
         enabled: true
         ingressClassName: "kong"
-        hostname: kong-admin.mifos.io
+        hostname: kong-admin1.mifos.io
     extraObjects:
       - apiVersion: configuration.konghq.com/v1
         kind: KongClusterPlugin
