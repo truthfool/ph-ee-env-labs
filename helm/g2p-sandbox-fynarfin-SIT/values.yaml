@@ -1,6 +1,8 @@
 ph-ee-g2psandbox:
   ph-ee-engine:
-   
+    kafka:
+      nodePort: 30099
+
     zeebe-cluster-helm:
       enabled: true
 
@@ -12,7 +14,7 @@ ph-ee-g2psandbox:
     zeebe-operate-helm:
       ingress:
         enabled: true 
-        host: operate.sandbox.fynarfin.io 
+        host: operate1.sandbox.fynarfin.io
       
     kibana:
       ingress:
@@ -23,7 +25,7 @@ ph-ee-g2psandbox:
         # kubernetes.io/ingress.class: nginx
         # kubernetes.io/tls-acme: "true"
         hosts:
-          - host: analytics.sandbox.fynarfin.io
+          - host: analytics1.sandbox.fynarfin.io
             paths:
               - path: /
 
@@ -42,7 +44,7 @@ ph-ee-g2psandbox:
       ingress:
         enabled: true 
         hosts:
-          - host: ams-mifos.sandbox.fynarfin.io          
+          - host: ams-mifos1.sandbox.fynarfin.io
             paths: 
             - path: "/"
               backend:
@@ -57,7 +59,7 @@ ph-ee-g2psandbox:
       ingress:
         enabled: true  
         hosts:
-          - host: mojaloop.sandbox.fynarfin.io          
+          - host: mojaloop1.sandbox.fynarfin.io
             paths: 
             - path: "/"
               backend:
@@ -66,7 +68,6 @@ ph-ee-g2psandbox:
                   port:
                     number: 80
 
-    # kafka:
 
     channel:
       enabled: true
@@ -82,7 +83,7 @@ ph-ee-g2psandbox:
       ingress:
         enabled: true 
         hosts:
-          - host: channel.sandbox.fynarfin.io          
+          - host: channel1.sandbox.fynarfin.io
             paths: 
             - path: "/"
               backend:
@@ -90,7 +91,7 @@ ph-ee-g2psandbox:
                   name: "ph-ee-connector-channel"
                   port:
                     number: 8443
-          - host: channel-gsma.sandbox.fynarfin.io          
+          - host: channel-gsma1.sandbox.fynarfin.io
             paths:          
             - path: "/"
               backend:
@@ -109,7 +110,7 @@ ph-ee-g2psandbox:
       ingress:
         enabled: true 
         hosts:
-          - host: ops-bk.sandbox.fynarfin.io          
+          - host: ops-bk1.sandbox.fynarfin.io
             paths: 
             - path: "/"
               backend:
@@ -125,7 +126,7 @@ ph-ee-g2psandbox:
         annotations:
           kubernetes.io/ingress.class: "nginx"
         hosts:
-          - host: ops.sandbox.fynarfin.io          
+          - host: ops1.sandbox.fynarfin.io
             paths: 
             - path: "/"
               backend:
@@ -157,7 +158,7 @@ ph-ee-g2psandbox:
       ingress:
         enabled: true 
         hosts:
-          - host: notifications.sandbox.fynarfin.io         
+          - host: notifications1.sandbox.fynarfin.io
             paths: 
             - path: "/"
               backend:
@@ -187,7 +188,7 @@ ph-ee-g2psandbox:
         tls:
           - secretName: sandbox-secret
         hosts:
-          - host: bulk-connector.sandbox.fynarfin.io     
+          - host: bulk-connector1.sandbox.fynarfin.io
             paths: 
             - path: "/"
               backend:
@@ -202,7 +203,7 @@ ph-ee-g2psandbox:
       ingress:
         enabled: true 
         hosts:
-          - host: zeebeops.sandbox.fynarfin.io          
+          - host: zeebeops1.sandbox.fynarfin.io
             paths: 
             - path: "/"
               backend:
@@ -220,7 +221,7 @@ ph-ee-g2psandbox:
       ingress:
         enabled: true   
         hosts:
-          - host: messagegateway.sandbox.fynarfin.io       
+          - host: messagegateway1.sandbox.fynarfin.io
             paths: 
             - path: "/"
               backend:
@@ -242,7 +243,7 @@ ph-ee-g2psandbox:
         annotations:
           kubernetes.io/ingress.class: nginx
         hosts:
-          - host: mockpaymentschema.sandbox.fynarfin.io
+          - host: mockpaymentschema1.sandbox.fynarfin.io
             paths:
               - path: "/"
                 backend:
@@ -259,7 +260,7 @@ ph-ee-g2psandbox:
       ingress:
         enabled: true 
         rules:
-          - host: 'keycloak.sandbox.fynarfin.io'
+          - host: 'keycloak1.sandbox.fynarfin.io'
             paths:
             - path: /
               pathType: Prefix
@@ -269,7 +270,7 @@ ph-ee-g2psandbox:
       enabled: false
       ingress:
         enabled: true
-        hostname: admin-kong.sandbox.fynarfin.io 
+        hostname: admin-kong1.sandbox.fynarfin.io
 
     redis:
       enabled: true
@@ -280,15 +281,15 @@ ph-ee-g2psandbox:
       enabled: true
 
       voucher:
-        hostname: "https://vouchers.sandbox.fynarfin.io"
+        hostname: "https://vouchers1.sandbox.fynarfin.io"
 
       salting:
         enabled: true
 
       identity-account-mapper:
-        hostname: "https://identity-mapper.sandbox.fynarfin.io"
+        hostname: "https://identity-mapper1.sandbox.fynarfin.io"
       operations:
-        hostname: "https://ops-bk.sandbox.fynarfin.io"
+        hostname: "https://ops-bk.sandbox1.fynarfin.io"
         endpoints:
           transfers: "/api/v1/transfers?size=1&page=0"
 
@@ -302,7 +303,7 @@ ph-ee-g2psandbox:
         tls:
           - secretName: sandbox-secret
         hosts:
-          - host: vouchers.sandbox.fynarfin.io
+          - host: vouchers1.sandbox.fynarfin.io
             paths:
               - path: "/"
                 backend:
@@ -324,7 +325,7 @@ ph-ee-g2psandbox:
       tls:
         - secretName: sandbox-secret
       hosts:
-        - host: identity-mapper.sandbox.fynarfin.io
+        - host: identity-mapper1.sandbox.fynarfin.io
           paths:
             - path: "/"
               backend:
